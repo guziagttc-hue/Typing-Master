@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { AppView, UserProfile, SessionStats, TypingMode } from './types';
+import { AppView, UserProfile, SessionStats, TypingMode, Language, PracticeCategory } from './types';
 import Dashboard from './components/Dashboard';
 import PracticeSession from './components/PracticeSession';
 import ResultsCard from './components/ResultsCard';
@@ -13,7 +13,7 @@ const STORAGE_KEY = 'typopro_user_data';
 
 const App: React.FC = () => {
   const [view, setView] = useState<AppView>(AppView.DASHBOARD);
-  const [practiceSettings, setPracticeSettings] = useState<{mode: TypingMode, limit: number}>({mode: TypingMode.TIME, limit: 60});
+  const [practiceSettings, setPracticeSettings] = useState<{mode: TypingMode, limit: number, language: Language, category: PracticeCategory}>({mode: TypingMode.TIME, limit: 60, language: Language.ENGLISH, category: PracticeCategory.STORIES});
   const [lastSession, setLastSession] = useState<SessionStats | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -91,8 +91,8 @@ const App: React.FC = () => {
         {view === AppView.DASHBOARD && (
           <Dashboard 
             profile={userProfile} 
-            onStart={(mode, limit) => {
-                setPracticeSettings({mode, limit});
+            onStart={(mode, limit, language, category) => {
+                setPracticeSettings({mode, limit, language, category});
                 setView(AppView.SPONSORED_LINK);
             }} 
           />
@@ -102,6 +102,8 @@ const App: React.FC = () => {
             bestWpm={userProfile.bestWpm}
             mode={practiceSettings.mode}
             limit={practiceSettings.limit}
+            language={practiceSettings.language}
+            category={practiceSettings.category}
             correctColor={userProfile.correctColor}
             incorrectColor={userProfile.incorrectColor}
             onComplete={handleSessionComplete}

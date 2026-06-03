@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { PRACTICE_TEXTS } from '../constants';
-import { SessionStats, TypingMode } from '../types';
+import { PRACTICE_CONTENT } from '../constants';
+import { SessionStats, TypingMode, Language, PracticeCategory } from '../types';
 import TypingWarrior from './TypingWarrior';
 import { X, RefreshCcw, Volume2, VolumeX } from 'lucide-react';
 
@@ -8,6 +8,8 @@ interface Props {
   bestWpm: number;
   mode: TypingMode;
   limit: number;
+  language: Language;
+  category: PracticeCategory;
   correctColor: string;
   incorrectColor: string;
   onComplete: (stats: SessionStats) => void;
@@ -28,20 +30,20 @@ const CharacterSpan = React.memo(({ char, i, userInput, correctColor, incorrectC
   
   if (i === userInput.length) {
     return (
-      <span key={i} className="mono text-2xl bg-blue-500/20 text-blue-500 rounded">
+      <span key={i} className="w-8 h-12 flex items-center justify-center text-2xl bg-blue-500/20 text-blue-500 rounded border-2 border-blue-500">
         {char}
       </span>
     );
   }
 
   return (
-    <span key={i} className={`mono text-2xl ${hasTyped ? '' : 'text-slate-500 dark:text-slate-500'}`} style={style}>
+    <span key={i} className={`w-8 h-12 flex items-center justify-center mono text-2xl border border-slate-300 dark:border-slate-600 rounded ${hasTyped ? 'bg-slate-100 dark:bg-slate-900' : 'text-slate-500 dark:text-slate-500'}`} style={style}>
       {char}
     </span>
   );
 });
 
-const PracticeSession: React.FC<Props> = ({ bestWpm, mode, limit, correctColor, incorrectColor, onComplete, onExit }) => {
+const PracticeSession: React.FC<Props> = ({ bestWpm, mode, limit, language, category, correctColor, incorrectColor, onComplete, onExit }) => {
   const [targetText, setTargetText] = useState('');
   const [userInput, setUserInput] = useState('');
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -61,13 +63,14 @@ const PracticeSession: React.FC<Props> = ({ bestWpm, mode, limit, correctColor, 
 
   // Initialize text
   useEffect(() => {
-    let text = PRACTICE_TEXTS[Math.floor(Math.random() * PRACTICE_TEXTS.length)];
+    const languageContent = PRACTICE_CONTENT[language][category];
+    let text = languageContent[Math.floor(Math.random() * languageContent.length)];
     if (mode === TypingMode.WORDS) {
         text = text.split(' ').slice(0, limit).join(' ');
     }
     setTargetText(text);
     inputRef.current?.focus();
-  }, [mode, limit]);
+  }, [mode, limit, language, category]);
 
   const calculateWpm = useCallback((chars: number, seconds: number) => {
     if (seconds === 0) return 0;
@@ -137,16 +140,26 @@ const PracticeSession: React.FC<Props> = ({ bestWpm, mode, limit, correctColor, 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    if (val.length <= targetText.length) {
+    
+    // Dynamically append more text if user reaches the end and more text is possible
+    let currentTargetText = targetText;
+    if (val.length === targetText.length) {
+        const languageContent = PRACTICE_CONTENT[language][category];
+        const nextText = languageContent[Math.floor(Math.random() * languageContent.length)];
+        currentTargetText = targetText + ' ' + nextText;
+        setTargetText(currentTargetText);
+    }
+    
+    if (val.length <= currentTargetText.length) { 
       const lastChar = val[val.length - 1];
-      const targetChar = targetText[val.length - 1];
+      const targetChar = currentTargetText[val.length - 1];
       
-      if (lastChar !== targetChar) {
+      if (val.length > userInput.length && lastChar !== targetChar) {
         setMistakes(prev => ({
           ...prev,
-          [targetChar]: (prev[targetChar] || 0) + 1
+          [targetChar || ' ']: (prev[targetChar || ' '] || 0) + 1
         }));
-      } else {
+      } else if (val.length > userInput.length) {
         // Correct key press audio
         if (soundEnabled) {
           audioRef.current.currentTime = 0;
@@ -155,7 +168,7 @@ const PracticeSession: React.FC<Props> = ({ bestWpm, mode, limit, correctColor, 
       }
 
       setUserInput(val);
-      setAccuracy(calculateAccuracy(val, targetText));
+      setAccuracy(calculateAccuracy(val, currentTargetText));
     }
   };
 
@@ -179,7 +192,8 @@ const PracticeSession: React.FC<Props> = ({ bestWpm, mode, limit, correctColor, 
     setWpm(0);
     setAccuracy(100);
     setMistakes({});
-    const randomText = PRACTICE_TEXTS[Math.floor(Math.random() * PRACTICE_TEXTS.length)];
+    const languageContent = PRACTICE_CONTENT[language][category];
+    const randomText = languageContent[Math.floor(Math.random() * languageContent.length)];
     setTargetText(randomText);
     inputRef.current?.focus();
   };
@@ -230,7 +244,7 @@ const PracticeSession: React.FC<Props> = ({ bestWpm, mode, limit, correctColor, 
         className="bg-white dark:bg-slate-800/50 p-10 rounded-3xl border-2 border-slate-200 dark:border-slate-700 shadow-xl dark:shadow-2xl relative group cursor-text min-h-[200px]"
         onClick={() => inputRef.current?.focus()}
       >
-        <div className="leading-relaxed flex flex-wrap gap-x-0.5">
+        <div className="flex flex-wrap gap-1 p-4">
           {renderText()}
         </div>
         <input

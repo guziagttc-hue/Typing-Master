@@ -1,17 +1,19 @@
 
 import React, { useState } from 'react';
-import { UserProfile, TypingMode } from '../types';
+import { UserProfile, TypingMode, Language, PracticeCategory } from '../types';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Play, Target, Zap, Clock, Type } from 'lucide-react';
 
 interface Props {
   profile: UserProfile;
-  onStart: (mode: TypingMode, limit: number) => void;
+  onStart: (mode: TypingMode, limit: number, language: Language, category: PracticeCategory) => void;
 }
 
 const Dashboard: React.FC<Props> = ({ profile, onStart }) => {
   const [mode, setMode] = useState<TypingMode>(TypingMode.TIME);
   const [limit, setLimit] = useState<number>(60);
+  const [language, setLanguage] = useState<Language>(Language.ENGLISH);
+  const [category, setCategory] = useState<PracticeCategory>(PracticeCategory.STORIES);
   const chartData = profile.history.slice(-7).map(session => ({
     date: new Date(session.date).toLocaleDateString('en-US', { weekday: 'short' }),
     wpm: session.wpm,
@@ -56,7 +58,7 @@ const Dashboard: React.FC<Props> = ({ profile, onStart }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl">
           <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
             <Zap size={20} className="text-blue-600 dark:text-blue-500" /> Performance Trend (Last 7 Days)
@@ -88,6 +90,21 @@ const Dashboard: React.FC<Props> = ({ profile, onStart }) => {
             <h3 className="text-2xl font-bold mb-2 text-slate-800 dark:text-white">Ready to Train?</h3>
             <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">Improve your speed with personalized exercises.</p>
             
+            <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as Language)}
+                className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white rounded-lg p-3 mb-2 outline-none font-bold"
+            >
+                {Object.values(Language).map(lang => <option key={lang} value={lang}>{lang}</option>)}
+            </select>
+            <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value as PracticeCategory)}
+                className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white rounded-lg p-3 mb-4 outline-none font-bold"
+            >
+                {Object.values(PracticeCategory).map(cat => <option key={cat} value={cat}>{cat}</option>)}
+            </select>
+
             <div className="flex gap-2 mb-4">
               <button 
                 onClick={() => { setMode(TypingMode.TIME); setLimit(60); }}
@@ -111,7 +128,7 @@ const Dashboard: React.FC<Props> = ({ profile, onStart }) => {
           </div>
 
           <button 
-            onClick={() => onStart(mode, limit)}
+            onClick={() => onStart(mode, limit, language, category)}
             className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center gap-2 group transform active:scale-95"
           >
             <Play fill="currentColor" size={20} />

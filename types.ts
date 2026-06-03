@@ -9,9 +9,28 @@ export enum AppView {
   SPONSORED_LINK = 'SPONSORED_LINK'
 }
 
+export enum Language {
+  ENGLISH = 'English',
+  BENGALI = 'Bengali',
+  SPANISH = 'Spanish',
+  FRENCH = 'French',
+  GERMAN = 'German',
+  ITALIAN = 'Italian',
+  PORTUGUESE = 'Portuguese',
+  HINDI = 'Hindi',
+  RUSSIAN = 'Russian',
+  JAPANESE = 'Japanese'
+}
+
 export enum TypingMode {
   TIME = 'TIME',
   WORDS = 'WORDS'
+}
+
+export enum PracticeCategory {
+  STORIES = 'Stories',
+  LETTERS = 'Letters',
+  NUMBERS = 'Numbers'
 }
 
 export interface SessionStats {
