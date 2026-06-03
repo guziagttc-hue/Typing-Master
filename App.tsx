@@ -146,6 +146,11 @@ const App: React.FC = () => {
                 Sponsored Link
             </a>
         </div>
+        <div className="mb-4 flex justify-center">
+            <a href="https://beta.publishers.adsterra.com/referral/r1xFAcN7eJ" rel="nofollow" className="text-blue-400 hover:text-blue-300 underline">
+                Referral link
+            </a>
+        </div>
         © 2024 TypoPro - Master the Art of Speed
       </footer>
     </div>
