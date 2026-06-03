@@ -7,6 +7,7 @@ import ResultsCard from './components/ResultsCard';
 import Settings from './components/Settings';
 import IMSoftworksInfo from './components/IMSoftworksInfo';
 import Contact from './components/Contact';
+import SponsoredLinks from './components/SponsoredLinks';
 
 const STORAGE_KEY = 'typopro_user_data';
 
@@ -64,8 +65,12 @@ const App: React.FC = () => {
     <div className={`min-h-screen ${userProfile.theme === 'dark' ? 'dark bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-900'} flex flex-col`}>
       <header className="px-6 py-4 bg-slate-800/50 dark:bg-slate-800/50 backdrop-blur-md border-b border-slate-700 flex justify-between items-center sticky top-0 z-50">
         <div className="flex items-center gap-2">
+          {view !== AppView.DASHBOARD && (
+            <button className="text-sm mr-4 hover:text-blue-400 font-bold" onClick={() => setView(AppView.DASHBOARD)}>← ব্যাক</button>
+          )}
           <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center font-bold text-xl">T</div>
           <h1 className="text-xl font-bold tracking-tight cursor-pointer" onClick={() => setView(AppView.DASHBOARD)}>TypoPro</h1>
+          <button className="text-sm ml-4 hover:text-blue-400" onClick={() => setView(view === AppView.SPONSORED_LINK ? AppView.DASHBOARD : AppView.SPONSORED_LINK)}>Time Word</button>
           <button className="text-sm ml-4 hover:text-blue-400" onClick={() => setView(AppView.IM_SOFTWORKS)}>IM Softworks</button>
           <button className="text-sm hover:text-blue-400" onClick={() => setView(AppView.CONTACT)}>Contact us</button>
         </div>
@@ -88,7 +93,7 @@ const App: React.FC = () => {
             profile={userProfile} 
             onStart={(mode, limit) => {
                 setPracticeSettings({mode, limit});
-                setView(AppView.PRACTICE);
+                setView(AppView.SPONSORED_LINK);
             }} 
           />
         )}
@@ -122,6 +127,9 @@ const App: React.FC = () => {
         )}
         {view === AppView.CONTACT && (
           <Contact />
+        )}
+        {view === AppView.SPONSORED_LINK && (
+          <SponsoredLinks onStartPractice={() => setView(AppView.PRACTICE)} />
         )}
       </main>
 

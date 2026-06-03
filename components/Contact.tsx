@@ -7,8 +7,8 @@ const Contact: React.FC = () => {
       <p className="text-lg text-slate-700 dark:text-slate-300">
         Feel free to connect with us at:
       </p>
-      <a href="mailto:im.softwark.team@gmail.com" className="text-blue-500 text-xl font-bold underline mt-4 block">
-        im.softwark.team@gmail.com
+      <a href="mailto:im.softwark.team@gmail.com" className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition">
+        Email us at im.softwark.team@gmail.com
       </a>
     </div>
   );

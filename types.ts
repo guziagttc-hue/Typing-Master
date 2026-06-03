@@ -5,7 +5,8 @@ export enum AppView {
   RESULT = 'RESULT',
   SETTINGS = 'SETTINGS',
   IM_SOFTWORKS = 'IM_SOFTWORKS',
-  CONTACT = 'CONTACT'
+  CONTACT = 'CONTACT',
+  SPONSORED_LINK = 'SPONSORED_LINK'
 }
 
 export enum TypingMode {
