@@ -137,7 +137,7 @@ const App: React.FC = () => {
 
       <footer className="p-4 text-center text-slate-500 text-sm">
         <div className="mb-4 flex justify-center">
-            <a href="#" rel="nofollow">
+            <a href="https://beta.publishers.adsterra.com/referral/r1xFAcN7eJ" rel="nofollow">
                 <img src="https://landings-cdn.adsterratech.com/referralBanners/gif/720x90_adsterra_reff.gif" alt="banner" />
             </a>
         </div>
